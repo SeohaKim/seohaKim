@@ -2,19 +2,19 @@ const A = {
   vectors: [
     {
       x: 0,
-      y: 8
+      y: 1
     },
     {
-      x: 2,
-      y: -8
+      x: 0.25,
+      y: -1
     },
     {
-      x: 2,
-      y: 8
+      x: 0.25,
+      y: 1
     },
     {
-      x: -3,
-      y: -4
+      x: -0.375,
+      y: -0.5
     }
   ]
 };
@@ -29,6 +29,7 @@ const B = {
 };
 
 const shf_data = {
-  A: A
+  A: A,
+  B: B
 };
 export default shf_data;
