@@ -1,23 +1,20 @@
 import React, { Component } from 'react';
 import shf_data from './seohafont_data.js';
-const canvas_style = {
-  background: 'white'
-};
+const canvas_style = {};
 class Seohafont extends Component {
   componentDidMount() {
     const WIDTH = 40;
     const HEIGHT = 80;
-    let x = shf_data['A'].vectors[0].x * 10;
-    let y = shf_data['A'].vectors[0].y * 10;
+    let x = shf_data['A'].vectors[0].x * WIDTH;
+    let y = shf_data['A'].vectors[0].y * HEIGHT;
     const ctx = this.refs.canvas.getContext('2d');
 
     ctx.beginPath();
-    ctx.lineCap = 'butt';
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 1;
     ctx.moveTo(x, y);
     shf_data['A'].vectors.slice(1).forEach(function(e) {
-      x += e.x * 10;
-      y += e.y * 10;
+      x += e.x * WIDTH;
+      y += e.y * HEIGHT;
       console.log(x, y);
       ctx.lineTo(x, y);
     });
@@ -30,13 +27,16 @@ class Seohafont extends Component {
    * 
    * @param {Number} x - X coordinate of top left corner
    * @param {Number} y - Y coordinate of top left corner
-   * @param {Number} width - width of target frame
-   * @param {Number} height - height of target frame
+   * @param {Number} w - width of target frame
+   * @param {Number} h - height of target frame
    * @param {String} c - Character to render
+   * @param {Object} ctx - Canvas reference object
    */
-  renderCharacter(x, y, width, height, c) {
-    let tx = x;
-    let ty = y;
+  renderCharacter(x, y, w, h, c, ctx) {
+    if (!(c in shf_data)) return;
+    const vectors = shf_data[c].map(x => ({ x: x * w, y: y * h }));
+    let tx = x + vectors[1];
+    let ty = y + vectors[1];
   }
 
   render() {
