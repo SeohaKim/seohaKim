@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
 import shf_data from './seohafont_data.js';
-const canvas_style = {};
+const canvas_style = {
+  width: '1000px',
+  height: '500px'
+};
 class Seohafont extends Component {
   componentDidMount() {
-    const ctx = this.refs.canvas.getContext('2d');
+    const canvas = this.refs.seoha_canvas;
+    const ctx = canvas.getContext('2d');
     ctx.beginPath();
-    ctx.lineWidth = 1;
+    ctx.lineTo(100, 100);
+    //ctx.lineWidth = 1;
     this.props.text.split('').forEach((e, i) => {
-      this.renderCharacter(i * 60, 10, 50, 100, e, ctx);
+      this.renderCharacter(i * 30, 10, 20, 40, e, ctx);
     });
-    ctx.stroke();
   }
 
   /**
@@ -30,18 +34,21 @@ class Seohafont extends Component {
     let ty = y + vectors[0].y;
     console.log(vectors);
     console.log(x, y);
+    ctx.beginPath();
     ctx.moveTo(tx, ty);
     console.log(tx, ty);
     vectors.slice(1).forEach(function(e) {
       tx += e.x;
       ty += e.y;
       ctx.lineTo(tx, ty);
-      console.log(tx, ty);
     });
+    ctx.stroke();
   }
 
   render() {
-    return <canvas ref="canvas" className="seoha_text" style={canvas_style} />;
+    return (
+      <canvas ref="seoha_canvas" className="seoha_text" style={canvas_style} />
+    );
   }
 }
 

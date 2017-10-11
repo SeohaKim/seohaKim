@@ -5,15 +5,15 @@ const A = {
       y: 1
     },
     {
-      x: 0.25,
+      x: 0.5,
       y: -1
     },
     {
-      x: 0.25,
+      x: 0.5,
       y: 1
     },
     {
-      x: -0.375,
+      x: -0.75,
       y: -0.5
     }
   ]
@@ -29,16 +29,20 @@ const B = {
       y: 0.25
     },
     {
-      x: -1,
+      x: -3 / 4,
       y: 0.25
     },
     {
-      x: 1,
+      x: 3 / 4,
       y: 1 / 4
     },
     {
       x: -1,
       y: 0.25
+    },
+    {
+      x: 0,
+      y: -3 / 4
     }
   ]
 };
@@ -75,6 +79,10 @@ const D = {
     {
       x: -1,
       y: 1 / 4
+    },
+    {
+      x: 0,
+      y: -3 / 4
     }
   ]
 };
@@ -135,13 +143,89 @@ const F = {
     {
       x: 0,
       y: 5 / 8
-    }]
-}
+    }
+  ]
+};
+// DONE
+const G = {
+  vectors: []
+};
+const H = {
+  vectors: [
+    {
+      x: 3 / 4,
+      y: 3 / 8
+    },
+    {
+      x: 1 / 4,
+      y: -3 / 8
+    },
+    {
+      x: 0,
+      y: 1
+    }
+  ]
+};
+const I = {
+  vectors: []
+};
+const J = {
+  vectors: []
+};
+const K = {
+  vectors: []
+};
+const L = {
+  vectors: []
+};
+const M = {
+  vectors: []
+};
+const N = {
+  vectors: []
+};
+const O = {
+  vectors: []
+};
+const P = {
+  vectors: []
+};
+const Q = {
+  vectors: []
+};
+const R = {
+  vectors: []
+};
+const S = {
+  vectors: []
+};
+const T = {
+  vectors: []
+};
+const U = {
+  vectors: []
+};
+const V = {
+  vectors: []
+};
+const W = {
+  vectors: []
+};
+const Y = {
+  vectors: []
+};
+const X = {
+  vectors: []
+};
+const Z = {
+  vectors: []
+};
 const shf_data = {
   A: A,
   B: B,
   C: C,
   D: D,
-  E: E
+  E: E,
+  F: F
 };
 export default shf_data;
