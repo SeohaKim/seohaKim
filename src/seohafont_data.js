@@ -1,3 +1,4 @@
+import { unfold } from './vector.js';
 const A = {
   vectors: [
     {
@@ -228,4 +229,6 @@ const shf_data = {
   E: E,
   F: F
 };
+for (let i in shf_data) {
+}
 export default shf_data;
