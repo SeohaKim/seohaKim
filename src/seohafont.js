@@ -12,7 +12,7 @@ class Seohafont extends Component {
     this.text_vectors = []; // text_vectors to push;
     const text = /^[a-zA-Z]+$/.test(this.props.children)
       ? this.props.children.toUpperCase()
-      : 'WROPNG TEXT';
+      : 'WRONG TEXT';
     text
       .split('')
       .forEach(e =>

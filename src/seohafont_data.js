@@ -230,5 +230,6 @@ const shf_data = {
   F: F
 };
 for (let i in shf_data) {
+  shf_data[i].s_vectors = unfold(shf_data[i].vectors);
 }
 export default shf_data;
