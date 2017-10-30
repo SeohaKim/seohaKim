@@ -7,9 +7,74 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Seohafont text="ABCDEF" text_width="30" text_height="60">
+        <Seohafont
+          ktext="ABCDEF"
+          text_width="20"
+          text_height="40"
+          vertical="true"
+        >
           ABCDE
         </Seohafont>
+        <div>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+          <p>1</p>
+          <p>2</p>
+        </div>
       </div>
     );
   } // 앱
