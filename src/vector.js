@@ -82,7 +82,6 @@ export const unfold = arr => arr.map(v => new Vec(v.x, v.y).stand());
  * @param {number} c coefficient 0~1
  */
 export function composeRotate(s, e, c) {
-  // @Todo
   let sa = s.angle;
   let ea = e.angle;
   let angleBetween = -1;
