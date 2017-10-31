@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import shf_data from './seohafont_data.js';
 import Vec, { angleToVec, composeRotate } from './vector.js';
+import './seohafont.css';
 
 const canvas_style = {
   position: 'fixed',
@@ -153,14 +154,8 @@ class Seohafont extends Component {
 
   render() {
     return (
-      <div height="100vh" style={wrapper_style}>
-        <canvas
-          ref="seoha_canvas"
-          className="seoha_text"
-          width="500"
-          height="700"
-          style={canvas_style}
-        />
+      <div>
+        <canvas ref="seoha_canvas" className="seoha_text" />
       </div>
     );
   }

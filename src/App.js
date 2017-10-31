@@ -13,7 +13,7 @@ class App extends Component {
           text_height="40"
           vertical="true"
         >
-          ABCDE
+          ABCDEF
         </Seohafont>
         <div>
           <br />
