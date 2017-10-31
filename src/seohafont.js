@@ -39,9 +39,13 @@ class Seohafont extends Component {
     const ctx = canvas.getContext('2d');
     const startT = Date.now();
     const duration = 2000;
+    let vw = document.documentElement.clientWidth;
+    let vh = document.documentElement.clientHeight;
+    canvas.setAttribute('width', (0.5 * vw).toString());
+    canvas.setAttribute('height', vh.toString());
     this.canvas_width = canvas.width;
     this.canvas_height = canvas.height;
-    //requestAnimationFrame(() => this.animate_straight(startT,duration,ctx));
+    requestAnimationFrame(() => this.animate_straight(startT, duration, ctx));
     this.renderString(ctx);
   }
 
