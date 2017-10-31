@@ -3,11 +3,11 @@ import shf_data from './seohafont_data.js';
 import Vec, { angleToVec, composeRotate } from './vector.js';
 
 const canvas_style = {
-  position: 'fixed'
+  position: 'fixed',
+  top: '0',
+  left: 'calc(50% - 250px)'
 };
-const wrapper_style = {
-  alignContent: 'center'
-};
+const wrapper_style = {};
 
 class Seohafont extends Component {
   constructor(props) {
@@ -153,11 +153,11 @@ class Seohafont extends Component {
 
   render() {
     return (
-      <div style={wrapper_style}>
+      <div height="100vh" style={wrapper_style}>
         <canvas
           ref="seoha_canvas"
           className="seoha_text"
-          width="1000"
+          width="500"
           height="700"
           style={canvas_style}
         />
