@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import shf_data from './seohafont_data.js';
-import Vec, { angleToVec, composeRotate } from './vector.js';
+import Vec, { unfold, angleToVec, composeRotate } from './vector.js';
 import './seohafont.css';
 
 const canvas_style = {
@@ -9,6 +9,7 @@ const canvas_style = {
   left: 'calc(50% - 250px)'
 };
 const wrapper_style = {};
+const clone = e => JSON.parse(JSON.stringify(e));
 
 class Seohafont extends Component {
   constructor(props) {
@@ -19,12 +20,8 @@ class Seohafont extends Component {
       : 'WRONG TEXT';
     text
       .split('')
-      .forEach(e =>
-        this.text_vectors.push(e === ' ' ? ' ' : Object.assign({}, shf_data[e]))
-      );
-    for (let i in this.text_vectors) {
-      this.text_vectors[i].current_vectors = [...this.text_vectors[i].vectors];
-    }
+      .forEach(e => this.text_vectors.push(clone(shf_data[e].vectors)));
+    console.log(this.text_vectors);
     this.state = {
       text: text
     };
@@ -43,8 +40,10 @@ class Seohafont extends Component {
     let vh = document.documentElement.clientHeight;
     canvas.setAttribute('width', (0.5 * vw).toString());
     canvas.setAttribute('height', vh.toString());
+    // canvas.setAttribute('left',(0.25 * vw).toString());
     this.canvas_width = canvas.width;
     this.canvas_height = canvas.height;
+
     requestAnimationFrame(() => this.animate_straight(startT, duration, ctx));
     this.renderString(ctx);
   }
@@ -69,14 +68,7 @@ class Seohafont extends Component {
 
       ctx.clearRect(0, 0, w, h);
       this.text_vectors.forEach((e, i) => {
-        this.renderVector(
-          sx + tw * i * 2,
-          sy,
-          tw,
-          th,
-          this.text_vectors[i].current_vectors,
-          ctx
-        );
+        this.renderVector(sx + tw * i * 2, sy, tw, th, e, ctx);
       });
     } else {
       let sx = w / 2 - tw / 2;
@@ -84,19 +76,15 @@ class Seohafont extends Component {
 
       ctx.clearRect(0, 0, w, h);
       this.text_vectors.forEach((e, i) => {
-        this.renderVector(
-          sx,
-          sy + th * i * 3,
-          tw,
-          th,
-          this.text_vectors[i].current_vectors,
-          ctx
-        );
+        this.renderVector(sx, sy + th * i * 3, tw, th, e, ctx);
       });
     }
   }
 
   animate_straight(startT, duration, ctx) {
+    const start_vectors = JSON.parse(JSON.stringify(this.text_vectors));
+    const end_vectors = start_vectors.map(unfold);
+    console.log(end_vectors);
     const deltaT = Date.now() - startT;
     if (deltaT < duration) {
       this.composeRotateVectors(deltaT, duration);
@@ -116,6 +104,8 @@ class Seohafont extends Component {
    * @param {Number} h - height of target frame
    * @param {[{x:Number,y:Number}]} v - Vector array to render
    * @param {Object} ctx - Canvas reference object @param y
+   *
+   * @return {Vec} - return end Vector;
    */
   renderVector(x, y, w, h, v, ctx) {
     const vectors = v.map(e => ({ x: e.x * w, y: e.y * h }));
@@ -129,32 +119,10 @@ class Seohafont extends Component {
       ctx.lineTo(tx, ty);
     });
     ctx.stroke();
+    return new Vec(tx, ty);
   }
 
-  composeRotateVectors(deltaT, duration, s_vectors, e_vectors, c) {
-    const delta = deltaT / duration;
-    this.text_vectors.forEach((e, i) => {
-      this.text_vectors[i].current_vectors.forEach((f, j) => {
-        let v1 = new Vec(
-          this.text_vectors[i].vectors[j].x,
-          this.text_vectors[i].vectors[j].y
-        );
-        let a1 = v1.angle;
-        let newVec = null;
-        if (Math.abs(a1) < Math.PI / 2) {
-          //clockwise
-          let deltaA = Math.PI / 2 - a1;
-          newVec = angleToVec(a1 + deltaA * delta);
-        } else {
-          //counter-clockwise
-          if (a1 <= 0) a1 += Math.PI * 2;
-          let deltaA = a1 - Math.PI / 2;
-          newVec = angleToVec(a1 - deltaA * delta);
-        }
-        this.text_vectors[i].current_vectors[j] = newVec.mult(v1.mag);
-      });
-    });
-  }
+  composeRotateVectors(s_vectors, e_vectors, c) {}
 
   render() {
     return (
