@@ -1,59 +1,62 @@
 import React, { Component } from 'react';
-import shf_data from './seohafont_data.js';
-import Vec, { unfold, angleToVec, composeRotate } from './vector.js';
+import PropTypes from 'prop-types';
+import 'raf/polyfill';
+import ShfData from './seohafont_data';
+import Vec, { unfold, snapComposer } from './vector';
 import './seohafont.css';
 
-const canvas_style = {
-  position: 'fixed',
-  top: '0',
-  left: 'calc(50% - 250px)'
-};
-const wrapper_style = {};
 const clone = e => JSON.parse(JSON.stringify(e));
 
 class Seohafont extends Component {
   constructor(props) {
     super(props);
+    const title = 'hello';
+    const fold = false;
     this.text_vectors = []; // text_vectors to push;
-    const text = /^[a-zA-Z]+$/.test(this.props.children)
+    const text = /^[a-zA-Z.]+$/.test(this.props.children)
       ? this.props.children.toUpperCase()
       : 'WRONG TEXT';
     text
       .split('')
-      .forEach(e => this.text_vectors.push(clone(shf_data[e].vectors)));
-    console.log(this.text_vectors);
-    this.state = {
-      text: text
-    };
+      .forEach(e => this.text_vectors.push(clone(ShfData[e].vectors)));
+    this.state = { title, fold };
 
-    this.animate_straight = this.animate_straight.bind(this);
+    this.animateStraight = this.animateStraight.bind(this);
     this.renderString = this.renderString.bind(this);
-    this.composeRotateVectors = this.composeRotateVectors.bind(this);
   }
 
   componentDidMount() {
-    const canvas = this.refs.seoha_canvas;
+    const canvas = this.seoha_canvas;
     const ctx = canvas.getContext('2d');
     const startT = Date.now();
     const duration = 2000;
-    let vw = document.documentElement.clientWidth;
-    let vh = document.documentElement.clientHeight;
+    const vw = document.documentElement.clientWidth;
+    const vh = document.documentElement.clientHeight;
     canvas.setAttribute('width', (0.5 * vw).toString());
     canvas.setAttribute('height', vh.toString());
     // canvas.setAttribute('left',(0.25 * vw).toString());
     this.canvas_width = canvas.width;
     this.canvas_height = canvas.height;
 
-    requestAnimationFrame(() => this.animate_straight(startT, duration, ctx));
+    requestAnimationFrame(() => this.animateStraight(startT, duration, ctx));
+    this.renderString(ctx);
+  }
+
+  animate(snapper, d) {}
+
+  animateStraight(startT, duration, ctx) {
+    const startVectors = JSON.parse(JSON.stringify(this.text_vectors));
+    const endVectors = startVectors.map(unfold);
+    const deltaT = Date.now() - startT;
+    if (deltaT < duration) {
+      requestAnimationFrame(() => this.animateStraight(startT, duration, ctx));
+    } else {
+    }
     this.renderString(ctx);
   }
 
   /**
    * render string on canvas
-   *
-   * @param {Number} w - Width of canvas
-   * @param {Number} h - height of canvas
-   * @param {Object} s - String to render
    * @param {Object} ctx - Canvas reference object
    */
   renderString(ctx) {
@@ -62,37 +65,23 @@ class Seohafont extends Component {
     const sl = this.text_vectors.length;
     const tw = this.props.text_width;
     const th = this.props.text_height;
-    if (!this.props.vertical) {
-      let sx = w / 2 - (sl * 2 - 1) * tw / 2;
-      let sy = h / 2 - th / 2;
+    if (this.props.vertical) {
+      const sx = w / 2 - (sl * 2 - 1) * tw / 2;
+      const sy = h / 2 - th / 2;
 
       ctx.clearRect(0, 0, w, h);
       this.text_vectors.forEach((e, i) => {
         this.renderVector(sx + tw * i * 2, sy, tw, th, e, ctx);
       });
     } else {
-      let sx = w / 2 - tw / 2;
-      let sy = h / 2 - (sl * 3 - 1) * th / 2;
+      const sx = w / 2 - tw / 2;
+      const sy = h / 2 - (sl * 1.5 - 1) * th * 0.5;
 
       ctx.clearRect(0, 0, w, h);
       this.text_vectors.forEach((e, i) => {
-        this.renderVector(sx, sy + th * i * 3, tw, th, e, ctx);
+        this.renderVector(sx, sy + th * i * 1.5, tw, th, e, ctx);
       });
     }
-  }
-
-  animate_straight(startT, duration, ctx) {
-    const start_vectors = JSON.parse(JSON.stringify(this.text_vectors));
-    const end_vectors = start_vectors.map(unfold);
-    console.log(end_vectors);
-    const deltaT = Date.now() - startT;
-    if (deltaT < duration) {
-      this.composeRotateVectors(deltaT, duration);
-      requestAnimationFrame(() => this.animate_straight(startT, duration, ctx));
-    } else {
-      this.composeRotateVectors(duration, duration);
-    }
-    this.renderString(ctx);
   }
 
   /**
@@ -107,30 +96,49 @@ class Seohafont extends Component {
    *
    * @return {Vec} - return end Vector;
    */
-  renderVector(x, y, w, h, v, ctx) {
-    const vectors = v.map(e => ({ x: e.x * w, y: e.y * h }));
+  renderVector(x, y, w, h, v) {
+    const vectors = v.map(e => new Vec(e.x, e.y).scale(w, h));
     let tx = x + vectors[0].x;
     let ty = y + vectors[0].y;
-    ctx.beginPath();
-    ctx.moveTo(tx, ty);
-    vectors.slice(1).forEach(function(e) {
+    this.ctx.beginPath();
+    this.ctx.lineWidth = 1;
+    this.ctx.moveTo(tx, ty);
+    vectors.slice(1).forEach(e => {
       tx += e.x;
       ty += e.y;
-      ctx.lineTo(tx, ty);
+      this.ctx.lineTo(tx, ty);
     });
-    ctx.stroke();
+    this.ctx.stroke();
     return new Vec(tx, ty);
   }
 
-  composeRotateVectors(s_vectors, e_vectors, c) {}
+  al(e) {
+    console.log('hello');
+    alert('hello');
+  }
 
   render() {
     return (
       <div>
-        <canvas ref="seoha_canvas" className="seoha_text" />
+        <button>{this.state.fold ? 'fold' : 'unfold'}</button>
+        <h1>{this.state.title}</h1>
+        <canvas
+          ref={c => {
+            this.seoha_canvas = c;
+            this.ctx = c.getContext('2d');
+          }}
+          className="seoha_text"
+        />
       </div>
     );
   }
 }
+
+Seohafont.propTypes = {
+  children: PropTypes.string.isRequired,
+  text_width: PropTypes.number.isRequired,
+  text_height: PropTypes.number.isRequired,
+  vertical: PropTypes.bool.isRequired
+};
 
 export default Seohafont;

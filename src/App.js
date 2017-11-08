@@ -1,19 +1,14 @@
 import React, { Component } from 'react';
+import 'raf/polyfill';
 import './App.css';
-
-import Seohafont from './seohafont.js';
+import Seohafont from './seohafont';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <Seohafont
-          ktext="ABCDEF"
-          text_width="20"
-          text_height="40"
-          vertical="true"
-        >
-          ABCDEF
+        <Seohafont text_width={20} text_height={40} vertical={false}>
+          SEOHAKIM
         </Seohafont>
         <div>
           <br />
@@ -152,6 +147,6 @@ class App extends Component {
   } // 앱
 }
 
-//this will be ignored
+// this will be ignored
 
 export default App;
