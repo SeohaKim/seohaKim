@@ -2,4 +2,9 @@
   position: fixed;
   top: 0;
   left: 25vw;
+  z-index: -1;
+}
+
+button {
+  z-index: 1;
 }

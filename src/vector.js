@@ -70,6 +70,12 @@ export default class Vec {
     return Math.atan2(this.x - v.x, this.y - v.y);
   }
 
+  /**
+   * scale vector by given width, height
+   * @param {Number} w
+   * @param {Number} h
+   * @return {Vec}
+   */
   scale(w, h) {
     return new Vec(this.x * w, this.y * h);
   }
@@ -77,10 +83,12 @@ export default class Vec {
 
 /**
  * Cast Object to Vec Object
- * @param {{x:Number,y:Number}} o
+ * @param {Object} o
+ * @param {Number} o.x
+ * @param {Number} o.y
  * @return {Vec}
  */
-export const castVec = o => new Vec(o.x, o.y);
+export const castVec = ({ x, y }) => new Vec(x, y);
 
 /**
  * Construct Vec Object from angle
@@ -91,7 +99,7 @@ export const angleToVec = a => new Vec(Math.cos(a), Math.sin(a));
 
 /**
  * Straighten vector array
- * @param {[{Vec}]} arr
+ * @param {Vec[]} arr
  *
  */
 export const unfold = arr => arr.map(v => new Vec(v.x, v.y).stand());
@@ -117,13 +125,11 @@ export function composeRotate(s, e, c) {
       sa += 2 * Math.PI;
       angleBetween = ea - sa;
     }
+  } else if (sa - ea <= Math.PI) {
+    angleBetween = ea - sa;
   } else {
-    // ea < 0
-    if (sa - ea <= Math.PI) angleBetween = ea - sa;
-    else {
-      ea += 2 * Math.PI;
-      angleBetween = ea - sa;
-    }
+    ea += 2 * Math.PI;
+    angleBetween = ea - sa;
   }
   return angleToVec(sa + angleBetween * c).mult(s.mag * (1 - c) + e.mag * c);
 }
@@ -131,12 +137,12 @@ export function composeRotate(s, e, c) {
 /**
  * Compose two Vec array with given function
  * @param {Vec} x
- * @param {[Vec]} xs
+ * @param {Vec[]} xs
  * @param {Vec} y
- * @param {[Vec]} ys
+ * @param {Vec[]} ys
  * @param {Number} c
  * @param {Function} f
- * @return {[Vec]}
+ * @return {Vec[]}
  */
 export function composeVector([x, ...xs], [y, ...ys], c, f = composeRotate) {
   if (x && y) return [composeRotate(x, y, c), ...composeVector(xs, ys, c, f)];
@@ -147,8 +153,8 @@ export function composeVector([x, ...xs], [y, ...ys], c, f = composeRotate) {
 
 /**
  * Returns function returning composedVector array
- * @param {[[Vec]]} s
- * @param {[[Vec]]} e
+ * @param {Vec[][]} s
+ * @param {Vec[][]} e
  * @return {Function}
  */
 export function snapComposer(s, e) {
