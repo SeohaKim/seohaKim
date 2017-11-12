@@ -2,8 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import 'raf/polyfill';
 import ShfData from './seohafont_data';
-import Vec, { unfold, snapComposer } from './vector';
+import Vec, {
+  unfold,
+  snapComposer,
+  VectorComposer,
+  VectorArrComposer
+} from './vector';
 import './seohafont.css';
+import { connect, horizontal } from './vecarr';
 
 /**
  * Shallow copy object
@@ -28,6 +34,7 @@ class Seohafont extends Component {
       ? this.props.children.toUpperCase()
       : 'WRONG TEXT';
     this.text_vectors = textToVecs(text);
+    [this.size, this.positions] = horizontal(text.length, 0.3);
     this.state = { title, fold, text };
 
     // binding for callback
@@ -35,10 +42,12 @@ class Seohafont extends Component {
     this.animateFold = this.animateFold.bind(this);
     this.renderString = this.renderString.bind(this);
     this.animate = this.animate.bind(this);
+    this.renderVector = this.renderVector.bind(this);
   }
 
   componentDidMount() {
     const canvas = this.seoha_canvas;
+    this.ctx = canvas.getContext('2d');
     const vw = document.documentElement.clientWidth;
     const vh = document.documentElement.clientHeight;
     canvas.setAttribute('width', (0.5 * vw).toString());
@@ -50,12 +59,16 @@ class Seohafont extends Component {
     this.renderString();
   }
 
-  animate(snapper, st, duration) {
+  animate(snapper, sizer, posit, st, duration) {
     const now = Date.now() - st;
-    console.log(now);
     if (duration > now) {
-      this.text_vectors = snapper(now / duration);
-      requestAnimationFrame(() => this.animate(snapper, st, duration));
+      let dt = now / duration;
+      this.text_vectors = snapper(dt);
+      this.size = sizer(dt);
+      this.position = posit(dt);
+      requestAnimationFrame(() =>
+        this.animate(snapper, sizer, posit, st, duration)
+      );
     } else {
       this.text_vectors = snapper(1);
     }
@@ -69,6 +82,13 @@ class Seohafont extends Component {
     return snapComposer(startVectors, endVectors);
   }
 
+  animateConnect() {
+    const from = clone(this.positions);
+    const fromSize = clone(this.size);
+    const [toSize, to] = connect(this.text_vectors.map(unfold));
+    return [VectorComposer(fromSize, toSize), VectorArrComposer(from, to)];
+  }
+
   animateFold() {
     const startVectors = JSON.parse(JSON.stringify(this.text_vectors));
     const endVectors = textToVecs(this.state.text);
@@ -77,39 +97,37 @@ class Seohafont extends Component {
 
   startLinearAnimation(duration, method) {
     const snapper = method();
+    const [sizer, posit] = this.animateConnect();
     const st = Date.now();
-    requestAnimationFrame(() => this.animate(snapper, st, duration));
+    requestAnimationFrame(() =>
+      this.animate(snapper, sizer, posit, st, duration)
+    );
   }
 
   /**
    * render string on canvas
    */
   renderString() {
-    const ctx = this.seoha_canvas.getContext('2d');
     const w = this.canvas_width;
     const h = this.canvas_height;
     const sl = this.text_vectors.length;
     const tw = this.props.text_width;
     const th = this.props.text_height;
-    if (!this.props.vertical) {
-      const sx = w / 2 - (sl * 2 - 1) * tw / 2;
-      const sy = h / 2 - th / 2;
-
-      ctx.clearRect(0, 0, w, h);
-      this.text_vectors.forEach((e, i) => {
-        this.renderVector(sx + tw * i * 2, sy, tw, th, e);
-      });
-    } else {
-      const sx = w / 2 - tw / 2;
-      const sy = h / 2 - (sl * 1.5 - 1) * th * 0.5;
-
-      ctx.clearRect(0, 0, w, h);
-      this.text_vectors.forEach((e, i) => {
-        this.renderVector(sx, sy + th * i * 1.5, tw, th, e);
-      });
-    }
+    const sx = w / 2 - this.size.x / 2 * tw;
+    const sy = h / 2 - this.size.y / 2 * th;
+    console.log(sx, sy);
+    console.log(sy + this.positions[4].y * th);
+    this.ctx.clearRect(0, 0, w, h);
+    this.text_vectors.forEach((e, i) => {
+      this.renderVector(
+        sx + this.positions[i].x * tw,
+        sy + this.positions[i].y * th,
+        tw,
+        th,
+        e
+      );
+    });
   }
-
   /**
    * Render vector array on canvas
    *

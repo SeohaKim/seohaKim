@@ -20,6 +20,15 @@ export default class Vec {
   }
 
   /**
+   * sub vector v from original vector
+   * @param {{x:Number,y:Number}} v
+   * @return {Vec}
+   */
+  sub(v) {
+    return new Vec(this.x - v.x, this.y - v.y);
+  }
+
+  /**
    * get y vector with magnitude of original vector
    * @return {Vec}
    */
@@ -134,6 +143,12 @@ export function composeRotate(s, e, c) {
   return angleToVec(sa + angleBetween * c).mult(s.mag * (1 - c) + e.mag * c);
 }
 
+export function VectorComposer(s, e) {
+  return function(c) {
+    return composeRotate(s, e, c);
+  };
+}
+
 /**
  * Compose two Vec array with given function
  * @param {Vec} x
@@ -151,10 +166,16 @@ export function composeVector([x, ...xs], [y, ...ys], c, f = composeRotate) {
   return [];
 }
 
+export function VectorArrComposer(from, to) {
+  return function(c) {
+    return composeVector(from, to, c);
+  };
+}
+
 /**
  * Returns function returning composedVector array
- * @param {Vec[][]} s
- * @param {Vec[][]} e
+ * @param {[[Vec]]} s
+ * @param {[[Vec]]} e
  * @return {Function}
  */
 export function snapComposer(s, e) {
